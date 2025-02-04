@@ -37,7 +37,7 @@ app.use('/chat', isAuthenticated, chatRoutes);
 app.use('/admin', isAuthenticated, adminRoutes);
 
 // Start the Server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4001;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

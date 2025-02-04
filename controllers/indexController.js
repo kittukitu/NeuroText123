@@ -37,12 +37,12 @@ const chatController = async (req, res) => {
         });
     }
 
-    const url = 'https://chat-gpt26.p.rapidapi.com/';
+    const url = 'https://chatgpt-42.p.rapidapi.com/gpt4';
     const options = {
         method: 'POST',
         headers: {
             'x-rapidapi-key': apiKey,  // Using API key from .env
-            'x-rapidapi-host': 'chat-gpt26.p.rapidapi.com',
+            'x-rapidapi-host': 'chatgpt-42.p.rapidapi.com',
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({

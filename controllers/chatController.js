@@ -8,7 +8,6 @@ const home = (req, res) => {
 const chatController = async (req, res) => {
     const { userInput } = req.body;
 
-    // Input Validation
     if (!userInput || typeof userInput !== 'string' || userInput.trim() === '') {
         return res.render('index', {
             response: 'Please provide a valid input.',
@@ -25,7 +24,6 @@ const chatController = async (req, res) => {
         });
     }
 
-    // Environment Variable Check
     const apiKey = process.env.RAPIDAPI_KEY;
     if (!apiKey) {
         console.error('Missing API Key. Check .env file.');
@@ -36,12 +34,12 @@ const chatController = async (req, res) => {
         });
     }
 
-    const url = 'https://chat-gpt26.p.rapidapi.com/';
+    const url = 'https://chatgpt-42.p.rapidapi.com/gpt4';
     const options = {
         method: 'POST',
         headers: {
-            'x-rapidapi-key': apiKey,  // Using API key from .env
-            'x-rapidapi-host': 'chat-gpt26.p.rapidapi.com',
+            'x-rapidapi-key': apiKey,
+            'x-rapidapi-host': 'chatgpt-42.p.rapidapi.com',
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -54,8 +52,9 @@ const chatController = async (req, res) => {
         const response = await fetch(url, options);
         const result = await response.json();
 
-        // Check if the API returned an actual response
-        if (!response.ok || !result.choices || result.choices.length === 0) {
+        console.log('API Response:', result);
+
+        if (!response.ok || !result.result) {
             console.error('API Error:', result);
             return res.render('index', {
                 response: 'Failed to get a valid response from the AI. Please try again later.',
@@ -64,8 +63,17 @@ const chatController = async (req, res) => {
             });
         }
 
+        const formattedResponse = result.result
+            .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+            .replace(/###\s(.*?)<br>/g, '<h3>$1</h3>')
+            .replace(/####\s(.*?)<br>/g, '<h4>$1</h4>')
+            .replace(/<li>(.*?)<br>/g, '<li>$1</li>')
+            .replace(/<li>(.*?)<\/li>/g, '<ul><li>$1</li></ul>')
+            .replace(/<\/ul><ul>/g, '')
+            .replace(/\n/g, '<br>');
+
         res.render('index', {
-            response: result.choices[0].message.content,
+            response: formattedResponse,
             userInput,
             user: req.session?.user || null,
         });
